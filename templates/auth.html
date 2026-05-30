@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ "Create Account" if mode == "signup" else "Log In" }} | StudyMate AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-body">
+    <main class="auth-shell">
+        <section class="auth-hero">
+            <a class="brand auth-brand" href="{{ url_for('login') }}">
+                <span class="brand-mark">S</span>
+                <span>StudyMate AI</span>
+            </a>
+            <p class="eyebrow">Personal study dashboard</p>
+            <h1>{{ "Create your study space" if mode == "signup" else "Welcome back" }}</h1>
+            <p>
+                Keep your StudyMate workspace private and use AI tools for summaries,
+                quizzes, flashcards, and study plans.
+            </p>
+            <div class="auth-points">
+                <span>AI notes</span>
+                <span>Pomodoro</span>
+                <span>Flashcards</span>
+            </div>
+        </section>
+
+        <section class="auth-card">
+            <div class="section-heading">
+                <p class="eyebrow">{{ "Sign up" if mode == "signup" else "Log in" }}</p>
+                <h2>{{ "Start studying" if mode == "signup" else "Continue studying" }}</h2>
+            </div>
+
+            {% if error %}
+                <div class="auth-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" class="auth-form">
+                {% if mode == "signup" %}
+                    <label for="name">Name</label>
+                    <input id="name" name="name" type="text" placeholder="Your name" required>
+                {% endif %}
+
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" required>
+
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Minimum 6 characters" required>
+
+                <button type="submit">
+                    {{ "Create account" if mode == "signup" else "Log in" }}
+                </button>
+            </form>
+
+            {% if mode == "signup" %}
+                <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+            {% else %}
+                <p class="auth-switch">New here? <a href="{{ url_for('signup') }}">Create account</a></p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMate AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="#notes" aria-label="StudyMate AI home">
+            <span class="brand-mark">S</span>
+            <span>StudyMate AI</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="#notes">Notes</a>
+            <a href="#tools">Tools</a>
+            <a href="#output">Output</a>
+            <a href="#focus">Focus</a>
+        </nav>
+
+        <div class="account-area">
+            <span class="user-pill">{{ user["name"] }}</span>
+            <a class="logout-link" href="{{ url_for('logout') }}">Log out</a>
+            <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle dark mode">
+                <span class="theme-icon" aria-hidden="true"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="app-shell">
+        <section class="intro-band">
+            <div>
+                <p class="eyebrow">AI study workspace</p>
+                <h1>Study smarter in your own AI workspace.</h1>
+                <p class="intro-copy">Paste notes, upload a text file, then create summaries, quizzes, flashcards, study plans, and doubt answers in one calm workspace.</p>
+            </div>
+
+            <div class="stat-row" aria-label="Study progress">
+                <div class="stat-tile">
+                    <span class="stat-number" id="summaryCount">0</span>
+                    <span>Summaries</span>
+                </div>
+                <div class="stat-tile">
+                    <span class="stat-number" id="quizCount">0</span>
+                    <span>Quizzes</span>
+                </div>
+                <div class="stat-tile">
+                    <span class="stat-number" id="askCount">0</span>
+                    <span>AI asks</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <section class="panel notes-panel" id="notes">
+                <div class="section-heading">
+                    <p class="eyebrow">Notes lab</p>
+                    <h2>Add your study material</h2>
+                </div>
+
+                <label for="notesInput">Paste notes</label>
+                <textarea id="notesInput" rows="16" placeholder="Paste lecture notes, textbook points, or rough revision notes here..."></textarea>
+
+                <div class="notes-meta">
+                    <span id="wordCount">0 words</span>
+                    <span id="readTime">0 min read</span>
+                    <span id="autoSaveStatus">Autosave ready</span>
+                </div>
+
+                <div class="file-row">
+                    <label class="file-picker" for="notesFile">Upload .txt or .md</label>
+                    <input id="notesFile" type="file" accept=".txt,.md">
+                    <span id="fileName">No file selected</span>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="ghost-button" id="sampleNotesBtn" type="button">Sample notes</button>
+                    <button class="ghost-button" id="clearNotesBtn" type="button">Clear</button>
+                </div>
+            </section>
+
+            <aside class="tool-stack" id="tools">
+                <section class="panel action-panel">
+                    <div class="section-heading compact">
+                        <p class="eyebrow">AI tools</p>
+                        <h2>Create study material</h2>
+                    </div>
+
+                    <div class="action-grid">
+                        <button id="summarizeBtn" type="button">Summary</button>
+                        <button id="quizBtn" type="button">Quiz</button>
+                        <button id="flashcardsBtn" type="button">Flashcards</button>
+                        <button id="studyPlanBtn" type="button">Study plan</button>
+                    </div>
+
+                    <div class="ask-box" id="ask">
+                        <label for="questionInput">Ask a doubt</label>
+                        <input id="questionInput" type="text" placeholder="Example: Explain this topic simply">
+                        <button id="askBtn" type="button">Ask AI</button>
+                    </div>
+                </section>
+
+                <section class="panel progress-panel">
+                    <div class="section-heading compact">
+                        <p class="eyebrow">Progress</p>
+                        <h2>Today</h2>
+                    </div>
+                    <div class="progress-track" aria-hidden="true">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-line">
+                        <span>Study progress</span>
+                        <strong id="progressLabel">0%</strong>
+                    </div>
+                </section>
+
+                <section class="panel timer-card" id="focus">
+                    <div class="section-heading compact">
+                        <p class="eyebrow">Focus</p>
+                        <h2>Pomodoro</h2>
+                    </div>
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-controls">
+                        <button id="startTimerBtn" type="button">Start</button>
+                        <button class="ghost-button" id="resetTimerBtn" type="button">Reset</button>
+                    </div>
+                </section>
+            </aside>
+        </section>
+
+        <section class="output-section" id="output">
+            <div class="output-topbar">
+                <div class="section-heading">
+                    <p class="eyebrow">Output board</p>
+                    <h2>Your AI responses</h2>
+                </div>
+                <div class="output-actions">
+                    <button class="ghost-button" id="copyOutputBtn" type="button">Copy latest</button>
+                    <button class="ghost-button" id="saveSummaryBtn" type="button">Save summary</button>
+                    <button class="ghost-button" id="loadSavedBtn" type="button">Load saved</button>
+                </div>
+            </div>
+
+            <div class="status-card hidden" id="loadingCard">
+                <div class="spinner" aria-hidden="true"></div>
+                <span id="loadingText">Generating response...</span>
+            </div>
+
+            <div class="status-card error-card hidden" id="errorCard"></div>
+            <p class="save-status" id="savedSummaryStatus">No saved summary yet.</p>
+
+            <div class="results-grid">
+                <article class="result-card" id="summaryResult">
+                    <div class="result-topline">
+                        <h3>Summary</h3>
+                        <button class="text-button" id="downloadSummaryBtn" type="button">Download .txt</button>
+                    </div>
+                    <div class="result-content empty">Generated summary will appear here.</div>
+                </article>
+
+                <article class="result-card" id="quizResult">
+                    <h3>Quiz</h3>
+                    <div class="result-content empty">Quiz questions will appear here.</div>
+                </article>
+
+                <article class="result-card" id="flashcardsResult">
+                    <h3>Flashcards</h3>
+                    <div class="result-content empty">Flashcards will appear here.</div>
+                </article>
+
+                <article class="result-card" id="planResult">
+                    <h3>Study Plan</h3>
+                    <div class="result-content empty">A focused study plan will appear here.</div>
+                </article>
+
+                <article class="result-card" id="answerResult">
+                    <h3>Ask AI Answer</h3>
+                    <div class="result-content empty">Answers to your doubts will appear here.</div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Built with Flask, JavaScript, REST APIs, and Groq.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
