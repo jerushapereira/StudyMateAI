@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Career Roadmap Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">CR</span>
+          <div>
+            <h1>CareerRoad AI</h1>
+            <p>Portfolio roadmap studio</p>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Dashboard sections">
+          <a href="#profile" class="nav-item active">Profile</a>
+          <a href="#roadmap" class="nav-item">Roadmap</a>
+          <a href="#gaps" class="nav-item">Skill Gaps</a>
+          <a href="#projects" class="nav-item">Projects</a>
+          <a href="#mentor" class="nav-item">AI Mentor</a>
+        </nav>
+
+        <section class="account-panel" aria-label="Account">
+          <div id="authLoggedOut">
+            <div class="auth-tabs" role="tablist" aria-label="Account actions">
+              <button class="auth-tab active" id="showLogin" type="button">Login</button>
+              <button class="auth-tab" id="showRegister" type="button">Create</button>
+            </div>
+
+            <form class="auth-form" id="loginForm">
+              <label>
+                Email
+                <input type="email" id="loginEmail" placeholder="you@example.com" required />
+              </label>
+              <label>
+                Password
+                <input type="password" id="loginPassword" placeholder="Minimum 6 characters" required />
+              </label>
+              <button class="primary-button compact full" type="submit">Login</button>
+            </form>
+
+            <form class="auth-form hidden" id="registerForm">
+              <label>
+                Name
+                <input type="text" id="registerName" placeholder="Your name" required />
+              </label>
+              <label>
+                Email
+                <input type="email" id="registerEmail" placeholder="you@example.com" required />
+              </label>
+              <label>
+                Password
+                <input type="password" id="registerPassword" placeholder="Minimum 6 characters" required />
+              </label>
+              <button class="primary-button compact full" type="submit">Create account</button>
+            </form>
+            <p class="auth-error" id="authError" role="alert"></p>
+          </div>
+
+          <div class="auth-user hidden" id="authLoggedIn">
+            <span class="account-avatar" id="accountAvatar">U</span>
+            <div>
+              <strong id="accountName">Student</strong>
+              <span id="accountEmail">student@example.com</span>
+            </div>
+            <button class="ghost-button full" id="logoutButton" type="button">Logout</button>
+          </div>
+        </section>
+
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+          <span class="toggle-dot"></span>
+          <span id="themeLabel">Light mode</span>
+        </button>
+      </aside>
+
+      <main class="main-content">
+        <section class="hero-band">
+          <div>
+            <p class="eyebrow">AI-powered internship planning</p>
+            <h2>Build a role-ready career roadmap from your current skills.</h2>
+          </div>
+          <div class="hero-stats" aria-label="Application highlights">
+            <div>
+              <strong id="timelineStat">--</strong>
+              <span>Timeline</span>
+            </div>
+            <div>
+              <strong id="phaseStat">0</strong>
+              <span>Phases</span>
+            </div>
+            <div>
+              <strong id="gapStat">0</strong>
+              <span>Skill gaps</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="dashboard-grid">
+          <form class="panel profile-panel" id="profileForm">
+            <div class="panel-heading" id="profile">
+              <div>
+                <p class="eyebrow">Student profile</p>
+                <h3>Roadmap inputs</h3>
+              </div>
+              <span class="status-pill">Groq API</span>
+            </div>
+
+            <label>
+              Name <span>optional</span>
+              <input type="text" id="name" placeholder="Aarav Sharma" />
+            </label>
+
+            <label>
+              Current skills
+              <textarea
+                id="skills"
+                rows="6"
+                placeholder="Python basics, HTML, CSS, SQL, Excel, Git..."
+                required
+              ></textarea>
+            </label>
+
+            <div class="field-grid">
+              <label>
+                Experience level
+                <select id="experienceLevel" required>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
+              </label>
+
+              <label>
+                Target role
+                <input type="text" id="targetRole" placeholder="Type any role, e.g., AI Engineer" required />
+              </label>
+            </div>
+
+            <button class="primary-button" type="submit">
+              <span class="button-loader" aria-hidden="true"></span>
+              <span id="submitText">Generate roadmap</span>
+            </button>
+            <p class="form-error" id="formError" role="alert"></p>
+          </form>
+
+          <section class="panel progress-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Progress tracker</p>
+                <h3>Your completion</h3>
+              </div>
+              <button class="ghost-button" id="resetProgress" type="button">Reset</button>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="progressChart" aria-label="Roadmap progress chart"></canvas>
+              <div class="progress-center">
+                <strong id="progressValue">0%</strong>
+                <span>complete</span>
+              </div>
+            </div>
+            <div class="progress-bar" aria-hidden="true">
+              <span id="progressFill"></span>
+            </div>
+            <p class="muted" id="progressHint">Generate a roadmap to start tracking each topic.</p>
+          </section>
+        </section>
+
+        <section class="panel roadmap-panel" id="roadmap">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Learning sequence</p>
+              <h3>Step-by-step roadmap</h3>
+            </div>
+            <span class="status-pill" id="roadmapStatus">Waiting for input</span>
+          </div>
+          <div class="empty-state" id="emptyRoadmap">
+            Enter your skills and target role to generate a personalized roadmap, project ladder, and skill gap report.
+          </div>
+          <div class="roadmap-list" id="roadmapList"></div>
+        </section>
+
+        <section class="split-grid">
+          <section class="panel" id="gaps">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Skill gap analysis</p>
+                <h3>What to learn next</h3>
+              </div>
+              <button class="ghost-button" id="reanalyzeBtn" type="button">Re-analyze</button>
+            </div>
+            <div class="gap-list" id="gapList"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Weekly plan</p>
+                <h3>Execution schedule</h3>
+              </div>
+            </div>
+            <div class="week-list" id="weekList"></div>
+          </section>
+        </section>
+
+        <section class="panel" id="projects">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Portfolio proof</p>
+              <h3>Project suggestions</h3>
+            </div>
+          </div>
+          <div class="project-grid" id="projectGrid"></div>
+        </section>
+
+        <section class="panel mentor-panel" id="mentor">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">AI mentor chat</p>
+              <h3>Ask for next steps</h3>
+            </div>
+          </div>
+          <div class="chat-window" id="chatWindow">
+            <div class="chat-message bot">
+              Ask me what to learn next, whether you are internship-ready, or which project to build.
+            </div>
+          </div>
+          <form class="chat-form" id="chatForm">
+            <input id="chatInput" type="text" placeholder="What should I learn next?" required />
+            <button class="primary-button compact" type="submit">Send</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>
